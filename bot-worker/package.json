@@ -1,0 +1,15 @@
+{
+  "name": "bot-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:bot": "node src/index.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "dotenv": "latest",
+    "playwright": "latest"
+  }
+}
+

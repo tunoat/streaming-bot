@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="เว็บจำลองสำหรับจัดการบัญชี โปรไฟล์ และ PIN ภายในเครื่อง"
+    />
+    <title>Streaming Bot Demo</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="site-header">
+        <div>
+          <p class="eyebrow">LOCAL MOCK ENVIRONMENT</p>
+          <h1>Streaming Account Manager</h1>
+          <p class="subtitle">จัดการบัญชีและ PIN ของบริการจำลอง</p>
+        </div>
+        <span class="environment-badge">DEMO ONLY</span>
+      </header>
+
+      <section id="login-panel" class="panel" aria-labelledby="login-title">
+        <h2 id="login-title">Admin Login</h2>
+        <p class="muted">เข้าสู่ระบบผู้ดูแลของเว็บไซต์จำลองนี้</p>
+        <form id="login-form" class="form">
+          <label for="username">Admin Username</label>
+          <input id="username" name="username" autocomplete="username" required />
+          <label for="password">Admin Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+          <button type="submit">เข้าสู่ระบบ</button>
+        </form>
+      </section>
+
+      <section id="account-panel" class="panel hidden" aria-labelledby="control-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="control-title">Admin Control</h2>
+            <p class="muted">จัดการบัญชีที่ Bind เข้าระบบจำลอง</p>
+          </div>
+          <div class="header-actions">
+            <button id="vacant-profile-button" class="button-secondary" type="button">
+              ค้นหาโปรไฟล์ว่าง
+            </button>
+            <button id="bind-account-button" type="button">Bind Account</button>
+            <button id="logout-button" class="button-secondary" type="button">
+              ออกจากระบบ
+            </button>
+          </div>
+        </div>
+
+        <section id="service-controls" class="hidden">
+          <h3 id="account-title">เลือกบริการด้านบน</h3>
+          <form id="account-name-form" class="inline-form hidden">
+            <label id="account-name-label" for="account-name">ชื่อเรียกบัญชี (Alias)</label>
+            <input id="account-name" name="name" maxlength="60" required />
+            <button type="submit">บันทึกชื่อบัญชี</button>
+          </form>
+          <div
+            id="profile-list"
+            class="profile-list hidden"
+            aria-label="รายการโปรไฟล์"
+          ></div>
+          <section id="profile-detail" class="profile-detail hidden">
+            <h3 id="profile-title"></h3>
+            <p id="current-pin" class="current-pin" data-testid="current-pin"></p>
+            <p id="pin-status" class="muted"></p>
+            <section class="expiry-panel" aria-labelledby="expiry-title">
+              <h4 id="expiry-title">สถานะและวันหมดอายุ</h4>
+              <p id="expiry-status" class="expiry-status" data-testid="expiry-status"></p>
+              <form id="expiry-date-form" class="expiry-date-form">
+                <label for="expiry-date">กำหนดวันหมดอายุเอง (วัน/เดือน/ปี)</label>
+                <input
+                  id="expiry-date"
+                  name="expiresAt"
+                  type="text"
+                  inputmode="numeric"
+                  placeholder="DD/MM/YYYY"
+                  pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}"
+                  title="กรอกวัน/เดือน/ปี เช่น 25/12/2026"
+                  required
+                />
+                <button type="submit">กำหนดวัน</button>
+              </form>
+              <div class="expiry-quick-buttons" aria-label="กำหนดวันหมดอายุแบบด่วน">
+                <button type="button" data-expiry-duration="day">รายวัน</button>
+                <button type="button" data-expiry-duration="week">รายสัปดาห์</button>
+                <button type="button" data-expiry-duration="month">รายเดือน</button>
+                <button type="button" data-expiry-duration="year">รายปี</button>
+              </div>
+              <button
+                id="clear-expiry-button"
+                class="button-secondary clear-expiry-button"
+                type="button"
+              >
+                เคลียร์วันหมดอายุ / ทำให้โปรไฟล์ว่าง
+              </button>
+              <p class="hint">
+                เมื่อหมดอายุหรือเปลี่ยน PIN ระบบจำลองจะนำโปรไฟล์ออกและหมุน PIN ใหม่
+              </p>
+            </section>
+            <form id="profile-name-form" class="inline-form">
+              <label for="profile-name">ชื่อโปรไฟล์</label>
+              <input id="profile-name" name="name" maxlength="40" required />
+              <button type="submit">บันทึกชื่อโปรไฟล์</button>
+            </form>
+            <form id="pin-form" class="form">
+              <label for="new-pin">New PIN</label>
+              <input
+                id="new-pin"
+                name="pin"
+                type="password"
+                inputmode="numeric"
+                autocomplete="new-password"
+                required
+              />
+              <span id="pin-hint" class="hint"></span>
+              <div class="button-row">
+                <button id="random-pin-button" class="button-secondary" type="button">
+                  สุ่ม PIN
+                </button>
+                <button type="submit">เปลี่ยน PIN</button>
+              </div>
+            </form>
+          </section>
+        </section>
+        <section class="bindings-panel" aria-labelledby="bindings-title">
+          <h3 id="bindings-title">บัญชีที่ Bind เพิ่ม</h3>
+          <form id="account-search-form" class="account-search">
+            <label for="account-search">ค้นหาชื่อบัญชี</label>
+            <input
+              id="account-search"
+              type="search"
+              placeholder="ค้นหาด้วย Alias"
+              autocomplete="off"
+            />
+            <button type="submit">Search</button>
+            <button
+              id="clear-account-search"
+              class="button-secondary"
+              type="button"
+              aria-label="ล้างการค้นหา"
+              title="ล้างการค้นหา"
+            >
+              X
+            </button>
+          </form>
+          <div id="bound-account-list" class="bound-account-list"></div>
+        </section>
+
+        <dialog id="bind-dialog" class="bind-dialog" aria-labelledby="bind-title">
+          <div class="section-heading">
+            <h2 id="bind-title">Bind Account</h2>
+            <button id="close-bind-dialog" class="button-secondary" type="button">
+              ปิด
+            </button>
+          </div>
+          <p class="muted">
+            โหมดจำลองเท่านั้น บอทจะอ่าน OTP จากกล่องอีเมลจำลองและกรอกให้ ห้ามใช้รหัสผ่านจริง
+          </p>
+          <form id="bind-start-form" class="form">
+            <label for="bind-service">บริการ</label>
+            <select id="bind-service" name="serviceId" required>
+              <option value="netflix">Netflix</option>
+              <option value="prime">Prime</option>
+              <option value="hbo">HBO</option>
+              <option value="disney">Disney</option>
+            </select>
+            <label for="bind-alias">ชื่อเรียกบัญชี (Alias)</label>
+            <input
+              id="bind-alias"
+              name="alias"
+              maxlength="60"
+              autocomplete="off"
+              required
+            />
+            <label for="bind-email">อีเมลบัญชี (จำลอง)</label>
+            <input
+              id="bind-email"
+              name="email"
+              type="email"
+              maxlength="254"
+              autocomplete="off"
+              required
+            />
+            <label for="bind-demo-password">รหัสผ่านเดโม (ไม่ส่งหรือบันทึก)</label>
+            <input
+              id="bind-demo-password"
+              type="password"
+              autocomplete="off"
+              placeholder="ใส่ค่าเดโมเท่านั้น"
+              required
+            />
+            <button type="submit">ขอ OTP เพื่อเข้าบริการสตรีมมิ่ง</button>
+          </form>
+          <section id="bind-otp-step" class="mock-inbox hidden">
+            <h3>สถานะบอท</h3>
+            <p id="mock-inbox-message" class="muted"></p>
+            <p id="streaming-login-status" class="login-status" role="status" aria-live="polite">
+              กำลังรอเริ่มงาน
+            </p>
+            <p id="mock-otp-code" class="mock-otp-code hidden"></p>
+            <p id="admin-assist-note" class="muted hidden">
+              หากพบ CAPTCHA หรือ bot prevention ในบริการจริง ต้องให้แอดมินตรวจสอบด้วยตนเอง
+              เดโมนี้ไม่เชื่อมต่อหรือข้ามระบบป้องกันของบริการจริง
+            </p>
+            <form id="bind-complete-form" class="form">
+              <button id="confirm-bind-button" type="submit" disabled>
+                ยืนยัน Bind Account
+              </button>
+            </form>
+          </section>
+          <p id="bind-message" class="message" role="status" aria-live="polite"></p>
+        </dialog>
+
+        <dialog
+          id="vacant-profile-dialog"
+          class="bind-dialog"
+          aria-labelledby="vacant-profile-title"
+        >
+          <div class="section-heading">
+            <h2 id="vacant-profile-title">ค้นหาโปรไฟล์ว่าง</h2>
+            <button
+              id="close-vacant-profile-dialog"
+              class="button-secondary"
+              type="button"
+            >
+              ปิด
+            </button>
+          </div>
+          <form id="vacant-profile-search-form" class="form">
+            <label for="vacant-service">เลือกบริการ</label>
+            <select id="vacant-service" name="serviceId" required>
+              <option value="netflix">Netflix</option>
+              <option value="prime">Prime</option>
+              <option value="hbo">HBO</option>
+              <option value="disney">Disney</option>
+            </select>
+            <button type="submit">ค้นหาโปรไฟล์ว่าง</button>
+          </form>
+          <div id="vacant-profile-results" class="vacant-profile-results"></div>
+        </dialog>
+      </section>
+
+      <p id="message" class="message" role="status" aria-live="polite"></p>
+      <footer>
+        ข้อมูลจำลองสำหรับทดสอบในเครื่องเท่านั้น · ไม่มีการเชื่อมต่อบริการภายนอก
+      </footer>
+    </main>
+  </body>
+</html>

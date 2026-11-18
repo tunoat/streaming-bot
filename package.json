@@ -1,0 +1,21 @@
+{
+  "name": "streaming-bot-mvp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local-only mock streaming account admin and Playwright bot",
+  "workspaces": [
+    "demo-web",
+    "bot-worker"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace demo-web",
+    "start:web": "npm run start --workspace demo-web",
+    "test:bot": "npm run test:bot --workspace bot-worker",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "typescript": "latest"
+  }
+}
+

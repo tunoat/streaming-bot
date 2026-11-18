@@ -1,0 +1,21 @@
+{
+  "name": "demo-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.ts",
+    "start": "node src/server.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "dotenv": "latest",
+    "express": "latest",
+    "express-session": "latest"
+  },
+  "devDependencies": {
+    "@types/express": "latest",
+    "@types/express-session": "latest"
+  }
+}
+
